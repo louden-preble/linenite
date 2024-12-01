@@ -5,18 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linux Ninite</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        .container { display: flex; flex-direction: column; align-items: center; }
-        .app-list { list-style: none; padding: 0; }
-        .app-list li { margin: 5px; }
-        button { padding: 10px 20px; font-size: 16px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2rem;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .app-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .app-list li {
+            margin: 10px 0;
+            padding-left: 20px;
+            font-size: 1.1rem;
+        }
+        label {
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            margin: 10px 0 20px;
+            width: 200px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Select Apps to Install</h1>
+        
+        <!-- List of applications -->
         <ul class="app-list">
             <li><input type="checkbox" id="vlc" value="vlc"> VLC</li>
             <li><input type="checkbox" id="git" value="git"> Git</li>
@@ -26,6 +78,7 @@
             <!-- Add more apps as necessary -->
         </ul>
 
+        <!-- Select Linux distribution -->
         <label for="distro">Select your distribution:</label>
         <select id="distro">
             <option value="apt">Ubuntu/Debian</option>
@@ -33,7 +86,12 @@
             <option value="pacman">Arch Linux</option>
         </select>
 
+        <!-- Generate Install Script Button -->
         <button onclick="generateScript()">Generate Install Script</button>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Linux Ninite - Simplified App Installation</p>
     </div>
 
     <script>
