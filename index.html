@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Ninite</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        .container { display: flex; flex-direction: column; align-items: center; }
+        .app-list { list-style: none; padding: 0; }
+        .app-list li { margin: 5px; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Select Apps to Install</h1>
+        <ul class="app-list">
+            <li><input type="checkbox" id="vlc" value="vlc"> VLC</li>
+            <li><input type="checkbox" id="git" value="git"> Git</li>
+            <li><input type="checkbox" id="firefox" value="firefox"> Firefox</li>
+            <li><input type="checkbox" id="gimp" value="gimp"> GIMP</li>
+            <li><input type="checkbox" id="docker" value="docker"> Docker</li>
+            <!-- Add more apps as necessary -->
+        </ul>
+
+        <label for="distro">Select your distribution:</label>
+        <select id="distro">
+            <option value="apt">Ubuntu/Debian</option>
+            <option value="dnf">Fedora/RHEL</option>
+            <option value="pacman">Arch Linux</option>
+        </select>
+
+        <button onclick="generateScript()">Generate Install Script</button>
+    </div>
+
+    <script>
+        function generateScript() {
+            const selectedApps = [];
+            const distro = document.getElementById('distro').value;
+
+            // Collect selected apps
+            document.querySelectorAll('.app-list input:checked').forEach(checkbox => {
+                selectedApps.push(checkbox.value);
+            });
+
+            if (selectedApps.length === 0) {
+                alert('Please select at least one application.');
+                return;
+            }
+
+            // Generate a script based on the selected apps and distribution
+            let script = "#!/bin/bash\n\n";
+            
+            if (distro === 'apt') {
+                script += "sudo apt update\n";
+                selectedApps.forEach(app => script += `sudo apt install -y ${app}\n`);
+            } else if (distro === 'dnf') {
+                script += "sudo dnf check-update\n";
+                selectedApps.forEach(app => script += `sudo dnf install -y ${app}\n`);
+            } else if (distro === 'pacman') {
+                script += "sudo pacman -Syu --noconfirm\n";
+                selectedApps.forEach(app => script += `sudo pacman -S --noconfirm ${app}\n`);
+            }
+
+            // Download the script (you could also send this script to a backend server to generate and send as a file)
+            const blob = new Blob([script], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'install_apps.sh';
+            link.click();
+        }
+    </script>
+
+</body>
+</html>
