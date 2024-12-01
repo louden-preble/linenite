@@ -50,10 +50,40 @@
 
     <p>Select the software you want to install:</p>
     <div class="software-list">
-        <label><input type="checkbox" value="vlc"> VLC Media Player</label>
-        <label><input type="checkbox" value="git"> Git</label>
-        <label><input type="checkbox" value="curl"> cURL</label>
+        <!-- Browsers -->
         <label><input type="checkbox" value="firefox"> Firefox</label>
+        <label><input type="checkbox" value="google-chrome-stable"> Google Chrome</label>
+        
+        <!-- Media Players -->
+        <label><input type="checkbox" value="vlc"> VLC Media Player</label>
+        
+        <!-- Utilities -->
+        <label><input type="checkbox" value="curl"> cURL</label>
+        <label><input type="checkbox" value="git"> Git</label>
+        <label><input type="checkbox" value="htop"> htop</label>
+        <label><input type="checkbox" value="wget"> wget</label>
+        
+        <!-- Productivity -->
+        <label><input type="checkbox" value="libreoffice"> LibreOffice</label>
+        <label><input type="checkbox" value="gimp"> GIMP</label>
+        
+        <!-- Messaging -->
+        <label><input type="checkbox" value="telegram-desktop"> Telegram</label>
+        <label><input type="checkbox" value="signal-desktop"> Signal</label>
+        
+        <!-- Development -->
+        <label><input type="checkbox" value="nodejs"> Node.js</label>
+        <label><input type="checkbox" value="python3"> Python3</label>
+        <label><input type="checkbox" value="docker-ce"> Docker</label>
+        
+        <!-- Editors -->
+        <label><input type="checkbox" value="code"> VS Code</label>
+        <label><input type="checkbox" value="sublime-text"> Sublime Text</label>
+        
+        <!-- Others -->
+        <label><input type="checkbox" value="zoom"> Zoom</label>
+        <label><input type="checkbox" value="spotify-client"> Spotify</label>
+        <label><input type="checkbox" value="obs-studio"> OBS Studio</label>
     </div>
     <button onclick="generateScript()">Generate Installation Script</button>
     <button onclick="copyScript()">Copy Script</button>
