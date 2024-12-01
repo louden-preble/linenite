@@ -14,8 +14,12 @@
             display: block;
             margin-bottom: 5px;
         }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
         button {
-            padding: 10px 20px;
             background-color: #007BFF;
             color: white;
             border: none;
@@ -35,6 +39,15 @@
 </head>
 <body>
     <h1>Linux Ninite</h1>
+    <p>Select your main Linux distribution:</p>
+    <select id="distro">
+        <option value="ubuntu">Ubuntu</option>
+        <option value="debian">Debian</option>
+        <option value="mint">Mint</option>
+        <option value="fedora">Fedora</option>
+        <option value="arch">Arch Linux</option>
+    </select>
+
     <p>Select the software you want to install:</p>
     <div class="software-list">
         <label><input type="checkbox" value="vlc"> VLC Media Player</label>
@@ -43,6 +56,8 @@
         <label><input type="checkbox" value="firefox"> Firefox</label>
     </div>
     <button onclick="generateScript()">Generate Installation Script</button>
+    <button onclick="copyScript()">Copy Script</button>
+
     <h2>Installation Script</h2>
     <pre id="scriptOutput">Your script will appear here...</pre>
 
@@ -50,39 +65,46 @@
         function generateScript() {
             const selected = Array.from(document.querySelectorAll('.software-list input:checked'))
                 .map(input => input.value);
-            
+            const distro = document.getElementById('distro').value;
+
             if (selected.length === 0) {
                 document.getElementById('scriptOutput').textContent = 'Please select at least one software.';
                 return;
             }
 
-            const distros = `
-# Detect Linux distribution
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    OS=$ID
-else
-    echo "Unsupported Linux distribution."
-    exit 1
-fi
+            let commands = '';
+            switch (distro) {
+                case 'ubuntu':
+                case 'debian':
+                case 'mint':
+                    commands = `sudo apt update && sudo apt install -y ${selected.join(' ')}`;
+                    break;
+                case 'fedora':
+                    commands = `sudo dnf install -y ${selected.join(' ')}`;
+                    break;
+                case 'arch':
+                    commands = `sudo pacman -S --noconfirm ${selected.join(' ')}`;
+                    break;
+                default:
+                    commands = '# Unsupported distribution';
+            }
 
-# Installation commands
-case $OS in
-    ubuntu|debian)
-        sudo apt update && sudo apt install -y ${selected.join(' ')}
-        ;;
-    fedora|rhel)
-        sudo dnf install -y ${selected.join(' ')}
-        ;;
-    arch)
-        sudo pacman -S --noconfirm ${selected.join(' ')}
-        ;;
-    *)
-        echo "Unsupported distribution: $OS"
-        ;;
-esac
-`;
-            document.getElementById('scriptOutput').textContent = distros;
+            const script = `#!/bin/bash
+# Installation script for ${distro}
+echo "Installing selected software for ${distro}..."
+${commands}
+echo "Installation complete."`;
+
+            document.getElementById('scriptOutput').textContent = script;
+        }
+
+        function copyScript() {
+            const script = document.getElementById('scriptOutput').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                alert('Script copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy script: ' + err);
+            });
         }
     </script>
 </body>
