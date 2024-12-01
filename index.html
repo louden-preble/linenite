@@ -7,130 +7,83 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
+            margin: 20px;
+            line-height: 1.5;
         }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 2rem;
-            color: #333;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        .app-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .app-list li {
-            margin: 10px 0;
-            padding-left: 20px;
-            font-size: 1.1rem;
-        }
-        label {
-            font-size: 1rem;
-            margin-top: 20px;
-        }
-        select {
-            padding: 10px;
-            font-size: 1rem;
-            margin: 10px 0 20px;
-            width: 200px;
+        .software-list label {
+            display: block;
+            margin-bottom: 5px;
         }
         button {
-            padding: 12px 30px;
-            font-size: 1.2rem;
-            background-color: #4CAF50;
+            padding: 10px 20px;
+            background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #888;
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Select Apps to Install</h1>
-        
-        <!-- List of applications -->
-        <ul class="app-list">
-            <li><input type="checkbox" id="vlc" value="vlc"> VLC</li>
-            <li><input type="checkbox" id="git" value="git"> Git</li>
-            <li><input type="checkbox" id="firefox" value="firefox"> Firefox</li>
-            <li><input type="checkbox" id="gimp" value="gimp"> GIMP</li>
-            <li><input type="checkbox" id="docker" value="docker"> Docker</li>
-            <!-- Add more apps as necessary -->
-        </ul>
-
-        <!-- Select Linux distribution -->
-        <label for="distro">Select your distribution:</label>
-        <select id="distro">
-            <option value="apt">Ubuntu/Debian</option>
-            <option value="dnf">Fedora/RHEL</option>
-            <option value="pacman">Arch Linux</option>
-        </select>
-
-        <!-- Generate Install Script Button -->
-        <button onclick="generateScript()">Generate Install Script</button>
+    <h1>Linux Ninite</h1>
+    <p>Select the software you want to install:</p>
+    <div class="software-list">
+        <label><input type="checkbox" value="vlc"> VLC Media Player</label>
+        <label><input type="checkbox" value="git"> Git</label>
+        <label><input type="checkbox" value="curl"> cURL</label>
+        <label><input type="checkbox" value="firefox"> Firefox</label>
     </div>
-
-    <div class="footer">
-        <p>&copy; 2024 Linux Ninite - Simplified App Installation</p>
-    </div>
+    <button onclick="generateScript()">Generate Installation Script</button>
+    <h2>Installation Script</h2>
+    <pre id="scriptOutput">Your script will appear here...</pre>
 
     <script>
         function generateScript() {
-            const selectedApps = [];
-            const distro = document.getElementById('distro').value;
-
-            // Collect selected apps
-            document.querySelectorAll('.app-list input:checked').forEach(checkbox => {
-                selectedApps.push(checkbox.value);
-            });
-
-            if (selectedApps.length === 0) {
-                alert('Please select at least one application.');
+            const selected = Array.from(document.querySelectorAll('.software-list input:checked'))
+                .map(input => input.value);
+            
+            if (selected.length === 0) {
+                document.getElementById('scriptOutput').textContent = 'Please select at least one software.';
                 return;
             }
 
-            // Generate a script based on the selected apps and distribution
-            let script = "#!/bin/bash\n\n";
-            
-            if (distro === 'apt') {
-                script += "sudo apt update\n";
-                selectedApps.forEach(app => script += `sudo apt install -y ${app}\n`);
-            } else if (distro === 'dnf') {
-                script += "sudo dnf check-update\n";
-                selectedApps.forEach(app => script += `sudo dnf install -y ${app}\n`);
-            } else if (distro === 'pacman') {
-                script += "sudo pacman -Syu --noconfirm\n";
-                selectedApps.forEach(app => script += `sudo pacman -S --noconfirm ${app}\n`);
-            }
+            const distros = `
+# Detect Linux distribution
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+else
+    echo "Unsupported Linux distribution."
+    exit 1
+fi
 
-            // Download the script (you could also send this script to a backend server to generate and send as a file)
-            const blob = new Blob([script], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'install_apps.sh';
-            link.click();
+# Installation commands
+case $OS in
+    ubuntu|debian)
+        sudo apt update && sudo apt install -y ${selected.join(' ')}
+        ;;
+    fedora|rhel)
+        sudo dnf install -y ${selected.join(' ')}
+        ;;
+    arch)
+        sudo pacman -S --noconfirm ${selected.join(' ')}
+        ;;
+    *)
+        echo "Unsupported distribution: $OS"
+        ;;
+esac
+`;
+            document.getElementById('scriptOutput').textContent = distros;
         }
     </script>
-
 </body>
 </html>
